@@ -1,0 +1,24 @@
+#cloud-config
+hostname: ubuntu20
+manage_etc_hosts: true
+user: user
+ssh_authorized_keys:
+  - ssh-rsa AAAAKEYHEEEEREEEE= user@client
+chpasswd:
+  expire: False
+users:
+  - default
+package_upgrade: true
+package_reboot_if_required: true
+locale: en_GB.UTF-8
+timezone: Europe/Berlin
+runcmd:
+  - sed -i 's/[#]*Port 22/Port 9726/g' /etc/ssh/sshd_config
+  - sed -i 's/[#]*PermitRootLogin yes/PermitRootLogin prohibit-password/g' /etc/ssh/sshd_config
+  - sed -i 's/[#]*PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
+  - sed -i 's/#HostKey \/etc\/ssh\/ssh_host_ed25519_key/HostKey \/etc\/ssh\/ssh_host_ed25519_key/g' /etc/ssh/sshd_config
+  - systemctl reload ssh
+packages:
+  - qemu-guest-agent
+  - docker.io
+
